@@ -1,0 +1,8 @@
+{
+  "name": "chat-real-time",
+  "version": "1.0.0",
+  "description": "Um chat com interação em tempo real",
+  "main": "index.js",
+  "author": "Victor Rodrigues dos Reis",
+  "license": "MIT"
+}
