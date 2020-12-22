@@ -6,7 +6,12 @@ const port = 3000;
 
 // Informa qual página será retornada na rota '/'
 app.get('/', (request, response) => {
-    response.sendFile(`${__dirname}/index.html`);
+    response.sendFile(`${__dirname}/pages/chat.html`);
+});
+
+app.get('/assets/*', (request, response) => {
+    const url = request.originalUrl;
+    response.sendFile(`${__dirname}${url}`);
 });
 
 // Informa quais eventos serão ouvidos ao se conectar ao socket
