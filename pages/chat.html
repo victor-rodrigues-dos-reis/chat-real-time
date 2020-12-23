@@ -1,17 +1,40 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Socket.IO chat</title>
-    <link rel="stylesheet" href="/assets/css/chat.css">
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+<head>
+	<title>Socket.IO chat</title>
+	<link rel="stylesheet" href="/assets/css/chat.css">
+</head>
+<body>
+	<main id="div-chat">
+		<ul id="messages"></ul>
+	</main>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script type="application/javascript" src="/assets/js/chat.js"></script>
-  </body>
+	<form id="form-message">
+		<input id="input-message" autocomplete="off" />
+		<button>Send</button>
+	</form>
+
+	<div id="modal">
+		<div id="modal-card">
+			<form id="form-username">
+				<label for="input-username">Informe seu nome de usuário</label>
+				<input type="text" id="input-username" name="username" autocomplete="off" autofocus>
+				<button>Confirmar</button>
+			</form>
+		</div>
+	</div>
+	
+	<script type="text/template" data-template="message">
+        <li class="message {{class}}">
+			<span class="message-author">{{username}}</span>
+			<div class="message-content">
+				{{message}}
+			</div>
+			<time class="message-time">{{current-time}}</time>
+        </li>
+    </script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script type="application/javascript" src="/assets/js/chat.js"></script>
+</body>
 </html>

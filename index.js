@@ -27,8 +27,8 @@ io.on('connection', (socket) => {
     })
 
     // Emitir para todos quando um usuário enviar uma mensagem
-    socket.on('chat message', (msg) => {
-        socket.broadcast.emit('chat message', msg);
+    socket.on('chat message', (data) => {
+        socket.broadcast.emit('chat message', data);
     });
 });
 
