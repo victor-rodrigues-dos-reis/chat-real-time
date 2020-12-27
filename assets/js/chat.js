@@ -4,6 +4,21 @@ $(function () {
     let typing = false; // indica se o usuário está digitando ou não
     let timeout = undefined; // guardará o timeout de digitação
 
+    // Troca caracteres que podem ser interpretado como "comandos" HTML
+    String.prototype.escape = function() {
+        // caracteres que serão trocados
+        var tagsToReplace = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;'
+        };
+
+        // retorna a string já com os caracteres trocados
+        return this.replace(/[&<>]/g, function(tag) {
+            return tagsToReplace[tag] || tag;
+        });
+    };
+
     // Retorna o horário atual
     function getCurrentTime() {
         const date = new Date();
@@ -29,17 +44,21 @@ $(function () {
         return messageTemplate;
     }
 
-    // Emite para o servidor que o usuário se conectou
-    socket.emit('connected', username);
-
     // Evento de submit do formulário de username
     $('#form-username').submit(function(e){
         e.preventDefault();
         
-        username = $('#input-username').val();
+        // Salva o conteúdo do input username e remove os espaços em branco no inicio e no final da string
+        username = $('#input-username').val().trim();
 
-        // esconde o modal que apresenta o formulário de "cadastro" do username
-        $('#modal').fadeOut();
+        // Verifica se foi digitado um nome que não seja apenas espaços em branco
+        if (username) {
+            // Emite para o servidor que o usuário se conectou
+            socket.emit('connected', username);
+
+            // esconde o modal que apresenta o formulário de "cadastro" do username
+            $('#modal').fadeOut();
+        }
 
         return false;
     });
@@ -49,15 +68,15 @@ $(function () {
         e.preventDefault();
 
         // Monta o texto enviado com o nome do usuário remetente
-        const myMessage = $('#input-message').val();
+        const myMessage = $('#input-message').html();
 
         // Emite para o servidor a mensagem que foi digitada pelo usuário remetente
         // e apresenta a mensagem digitada ao usuário remetente
         socket.emit('chat message', {message: myMessage, username: username}, myMessages(myMessage));
         stopShowTyping();
 
-        // Limpa o input de mensagem
-        $('#input-message').val('');
+        // Limpa o "input" de mensagem
+        $('#input-message').html('');
 
         return false;
     });
@@ -79,6 +98,75 @@ $(function () {
             stopShowTyping()
         }, 1500);
     });
+
+    // Trata o conteúdo colado no "input" de mensagem
+    $("#input-message").on('paste', function(event) {
+        // recebe o valor do clipboard
+        var pastedData = event.originalEvent.clipboardData.getData('text');
+        pastedData = pastedData.trim();     // remove os espaços em branco no inicio e no final da strig
+        pastedData = (pastedData).escape(); // troca os caracteres que poder ser interpretados como "comandos" HTML
+        pastedData = pastedData.replace(/\n/g, "<br />"); // troca as quebras de linha por <br>
+        
+        // passa para o "input" de mensagem a string já tratada
+        $(this).html(pastedData);
+
+        event.preventDefault();
+    });
+
+    // Ao clicar no botão de enviar: não permite que envie a mensagem caso o "input" esteja vazio
+    $("#form-message button").click(function(event) {
+
+
+        // verifica se o "input" de mensagem está vazio
+        if (!$('#input-message').text().trim()) {
+            $('#input-message').html('');
+            event.preventDefault();
+        }
+    });
+
+    // Verifica se o input está vazio quando "desfocado"
+    $("#input-message").focusout(function(){
+        var element = $(this);
+
+        // Se o input tiver apenas espaços em branco limpa o input
+        if (!element.text().trim()) {
+            element.html('');
+        }
+    });
+
+    // Realiza verificações nas teclas digitadas no input de mensagem
+    $("#input-message").keydown(function(event){
+        const inputContent = $(this).text().trim();
+
+        // Se for pressionado shift + enter: pula linha
+        if( event.which === 13 && event.shiftKey ) {
+            // Se o input estiver vazio não permitir pular linha
+            if (!inputContent)
+                event.preventDefault();
+            
+        }
+        // Se  for pressionado espace: adiciona espaço
+        else if (event.which === 32) {
+            // Se o input estiver vazio não permitir adicionar espaço
+            if (!inputContent) {
+                event.preventDefault();
+                return;
+            }
+        }
+        // Se for pressionado enter: envia o formulário
+        else if (event.which === 13) {
+            // se o input estiver vazio não permitir enviar formulário
+            if (!inputContent) {
+                event.preventDefault();
+                return;
+            }
+
+            // dispara o evento de submit
+            $('#form-message').submit();
+        }
+    });
+
+    
 
     // Emite para o servidor quando o usuário remetente para de digitar
     function stopShowTyping() {
@@ -104,10 +192,11 @@ $(function () {
         // true: Adiciona uma mensagem indicando que o usuário específico está digitando
         // false: Remove a mensagem que indica que um usuário está digitando
         if (status) {
-            $('#messages').append($('<li>').text(`${user} está digitando ...`).attr('id', 'typing'));
+            $('#show-typing').slideDown();
+            $('#show-typing').text(`${user} está digitando ...`);
         }
         else {
-            $('#typing').remove();
+            $('#show-typing').slideUp();
         }
     })
 
@@ -123,5 +212,10 @@ $(function () {
     // Recebe do servidor as informações de quando um usuário se conecta 
     socket.on('connected', function(username){
         $('#messages').append($('<li>').text(`${username} acabou de entrar no chat`).addClass('user-logged'));
+    });
+
+    // Recebe do servidor as informações de quando um usuário se desconecta 
+    socket.on('disconnect', function(username){
+        $('#messages').append($('<li>').text(`${username} acabou de sair do chat`).addClass('user-disconnected'));
     });
 });

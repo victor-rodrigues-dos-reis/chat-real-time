@@ -16,8 +16,11 @@ app.get('/assets/*', (request, response) => {
 
 // Informa quais eventos serão ouvidos ao se conectar ao socket
 io.on('connection', (socket) => {
+    var user;   //guarda o nome do usuário logado
+
     // Emitir para todos quando um usuário conectar (Quando informar seu nome de usuário)
     socket.on('connected', (username) => {
+        user = username
         socket.broadcast.emit('connected', username);
     });
 
@@ -29,6 +32,13 @@ io.on('connection', (socket) => {
     // Emitir para todos quando um usuário enviar uma mensagem
     socket.on('chat message', (data) => {
         socket.broadcast.emit('chat message', data);
+    });
+
+    // Emitir para todos quando um usuário desconecta
+    socket.on('disconnect', () => {
+        // verifica se o usuário informar o nome
+        if (user)
+            io.emit('disconnect', user);
     });
 });
 
