@@ -1,6 +1,9 @@
 /* CONFIGURAÇÕES GERAIS */
 :root {
-
+    --dark-purple: #1E1E26;
+    --purple: #352C73;
+    --light-purple: #4B39BF;
+    --green: #0FF25E;
 }
 
 * { 
@@ -33,14 +36,15 @@ main {
     left: 15px;
     min-width: 200px;
     padding: 7px 10px;
-    background: #fff;
+    background: var(--green);
     display: none;
+    z-index: 10;
 }
 
 
 /* APRESENTAÇÃO DAS MENSAGENS */
 #div-chat {
-    background-color: #2D2E40;
+    background-color: var(--dark-purple);
     flex: 1 1 0;
     order: 1;
     overflow: auto;
@@ -87,8 +91,9 @@ main {
 }
 
 #messages li.received-message {
-    background-color: #F27405;
+    background-color: var(--light-purple);
     align-self: flex-start;
+    color: #fff;
 }
 
 #messages li.received-message::before {
@@ -97,16 +102,17 @@ main {
     height: 0px;
     position: absolute;
     border-left: 7px solid transparent;
-    border-right: 7px solid #F27405;
-    border-top: 7px solid #F27405;
+    border-right: 7px solid var(--light-purple);
+    border-top: 7px solid var(--light-purple);
     border-bottom: 7px solid transparent;
     left: -14px;
     top: 0;
 }
 
 #messages li.my-message {
-    background: #F25C05;
+    background: var(--purple);
     align-self: flex-end;
+    color: #fff;
 }
 
 #messages li.my-message::before {
@@ -114,9 +120,9 @@ main {
     width: 0px;
     height: 0px;
     position: absolute;
-    border-left: 7px solid #F25C05;
+    border-left: 7px solid var(--purple);
     border-right: 7px solid transparent;
-    border-top: 7px solid #F25C05;
+    border-top: 7px solid var(--purple);
     border-bottom: 7px solid transparent;
     right: -14px;
     top: 0;
@@ -148,24 +154,27 @@ main {
 
 /* FORMULÁRIO DE ENVIO DE MENSAGEM */
 #form-message { 
-    background: #000; 
+    background: var(--purple); 
+    box-shadow: 0 0 10px var(--dark-purple);
     width: 100%;
     display: flex;
     padding: 10px 0;
     justify-content: center;
     align-items: center;
     order: 2;
+    z-index: 5;
 }
 
 #form-message div {
-    background-color: #fff;
+    background-color: #ddd;
     padding: 10px;
     width: 90%; 
     margin-right: 0.5%;
+    border-radius: 8px;
 }
 
 #form-message span { 
-    background-color: #fff;
+    background-color: transparent;
     border: 0;
     width: 100%;
     display: inline-block;
@@ -185,9 +194,11 @@ main {
 
 #form-message button { 
     width: 9%; 
-    background: rgb(130, 224, 255); 
+    background: var(--dark-purple);
+    color: #ddd;
     border: none; 
-    padding: 10px; 
+    padding: 10px;
+    border-radius: 5px;
 }
 
 
@@ -203,6 +214,7 @@ main {
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 20;
 }
 
 #modal-card {
@@ -210,7 +222,7 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: #fff;
+    background: var(--light-purple);
     width: 50%;
     height: 35%;
     border-radius: 15px;
@@ -231,6 +243,9 @@ main {
 #form-username label {
     font-size: 2em;
     margin-bottom: 30px;
+    text-shadow: 0 0 2px #fff5;
+    color: var(--dark-purple);
+    font-weight: bold;
 }
 
 #form-username input {
@@ -239,14 +254,17 @@ main {
     font-size: 1.3em;
     padding: 5px 12px;
     text-align: center;
-    border-radius: 15px;
+    border-radius: 5px;
     border: none;
-    border-bottom: 3px solid #000;
+    background-color: #fff;
+    box-shadow: 0 0 2px #0007;
 }
 
 #form-username button {
     width: 200px;
-    border: 2px solid #000;
-    background: transparent;
+    color: #fff;
+    border: none;
+    background: var(--dark-purple);
     padding: 10px;
+    cursor: pointer;
 }
